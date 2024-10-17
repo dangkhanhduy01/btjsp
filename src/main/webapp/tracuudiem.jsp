@@ -23,28 +23,59 @@
             họ tên <input type="text" name="hoten" value="" />
             <button type="submit">tra cứu</button>
         </form>
-            <%
-        request.setCharacterEncoding("UTF-8");
-        String hoten = request.getParameter("hoten");
-        String sobd = request.getParameter("sobd");
-        
-        if (hoten != null || sobd!=null)
-        {
-           Connection conn = null;
-        PreparedStatement ps=null;
-        ResultSet rs=null;
-          conn = Database.getConnection();
-           if (hoten != null || sobd!=null)
-        {
-           ps = conn.prepareStatement("select*from thisinh where hoten like ?");
-             ps.setString(1, "%" + hoten + "%");
-            }else if(sobd!=null && !sobd.isEmpty())
+    <%
+            request.setCharacterEncoding("UTF-8");
+            String hoten =request.getParameter("hoten");
+            String sodb =request.getParameter("sodb");
+            if(hoten!=null || sodb!=null)
             {
-            ps = conn.prepareStatement("select*from thisinh where sobd=?");
-             ps.setString(1, sobd);
-            }
-            rs = ps.executeQuery();
-        
-    %>
+            Connection conn=null;
+            PreparedStatement ps=null;
+            ResultSet rs=null;
+            
+            conn=Database.getConnection();
+            if(hoten!=null && !hoten.isEmpty())
+            {
+            ps = conn.prepareStatement("select * from thisinh where hoten like?");
+            ps.setString(1,"%" + hoten + "%");
+        }else if(sodb!=null && !sodb.isEmpty())
+        {
+        ps = conn.prepareStatement("select * from thisinh where sodb?");
+        ps.setString(1,sodb);
+        }
+        rs=ps.executeQuery();
+        %>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Số báo danh</th>
+                        <th>Họ tên</th>
+                        <th>Địa chỉ</th>
+                        <th>Điểm toán</th>
+                        <th>Điểm lý</th>
+                        <th>Điểm hoá</th>
+                        <th>Tổng điểm</th>
+                    </tr>
+                    <%
+                        while(rs.next())
+                        {
+                        double tongdiem=rs.getFloat("toán")+rs.getFloat("lý")+rs.getFloat("hoá");                 
+                    %> 
+                    <tr>
+                        <td><%=rs.getString(1)%></td>
+                        <td><%=rs.getString(2)%></td>
+                        <td><%=rs.getString(3)%></td>
+                        <td><%=rs.getFloat(4)%></td>
+                        <td><%=rs.getFloat(5)%></td>
+                        <td><%=rs.getFloat(6)%></td>
+                        <td><%=tongdiem%></td>
+                    </tr>
+                    <%
+                        }
+                        %>
+            </table>
+                        <%
+                            }
+                        %>
     </body>
 </html>
